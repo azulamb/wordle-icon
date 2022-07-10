@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>WORDLE ICON</title>
+<link rel="shortcut icon" href="/favicon.svg">
+<style>
+:root{ --back: #121213; --c: #538d4e; --w: #b59f3b; --u: #3a3a3c; --front: #ffff; }
+.light{ --back: #ffffff; --c: #6aaa64; --w: #c9b458; --u: #787c7e; --front: #121213; }
+html { height: 100%; font-size: 3vmin; }
+body { margin: 0; padding: 1rem 0; box-sizing: border-box; height: 100%; background: var(--back); color: var(--front); }
+#main { font-size: 2rem; display: grid; grid-template-columns: 5.4em 1fr 6.5em; grid-template-rows: 6.5em; }
+#wordle { font-size: 2rem; width: 5.4em; display: grid; grid-template-columns: 1em 1em 1em 1em 1em; grid-template-rows: 1em 1em 1em 1em 1em 1em; gap: 0.1em; background: var(--back); }
+#input { font-size: 1rem; display: grid; grid-template-rows: 1fr 1.5rem; }
+button { font-size: 0.1rem; --frame: var(--u); --back: transparent; background: var(--back); border: 1em solid var(--frame); box-sizing: border-box; padding: 0; cursor: pointer; width: 20em; height: 20em; border-radius: 4em; }
+button[data-color="c"] { --frame: var(--c); --back: var(--c); }
+button[data-color="w"] { --frame: var(--w); --back: var(--w); }
+button[data-color="u"] { --frame: var(--u); --back: var(--u); }
+h1 { text-align: center; }
+textarea { font-size: 1rem; background: var(--back); color: var(--front); border: none; outline: none; resize: none; }
+#tag { display: block; width: 100%; padding: 0; outline: none; border: none; font-size: 1rem; background: var(--back); color: var(--front); margin-top: 0.5rem; text-align: center; }
+</style>
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+	const data = {
+		'⬜': 'u',
+		'⬛': 'u',
+		'🟨': 'w',
+		'🟩': 'c',
+	};
+	const next = [ '', 'u', 'w', 'c' ];
+
+	const sample = document.getElementById('sample');
+
+	const result = document.getElementById('result');
+	result.addEventListener('input', () => {
+		const value = result.value;
+
+		// Parse result.
+		const panels = [... value.replace(/[^⬜⬛🟨🟩]/g, '')].map((panel) => {
+			return data[panel];
+		});
+
+		const status = {
+			no: 0,
+			result: 0,
+		};
+
+		// Parse status.
+		value.split(/\s+/g).forEach((data) => {
+			if (data.match(/^[0-9]+$/)) {
+				// Number.
+				status.no = parseInt(data);
+			} else if(data.match(/^[0-9]\/[0-9]$/)) {
+				// Result.
+				const result = data.split('/');
+				status.result = parseInt(result[0]);
+			}
+		});
+
+		update(panels);
+	});
+
+	const square = document.getElementById('square');
+	square.addEventListener('click', () => {
+		update();
+	});
+
+	const light = document.getElementById('light');
+	light.addEventListener('click', () => {
+		document.body.classList[light.checked ? 'add' : 'remove']('light');
+		update();
+	});
+
+	const buttons = [];
+	((wordle) => {
+		for (let i = 0 ; i < 30 ; ++i) {
+			const button = document.createElement('button');
+			buttons.push(button);
+			button.addEventListener('click',()=> {
+				const now = button.dataset.color || '';
+				button.dataset.color = next[ (next.indexOf(now) + 1) % 4 ];
+				update();
+			});
+			wordle.appendChild(button);
+		}
+	})(document.getElementById('wordle'));
+
+	const tag = document.getElementById('tag');
+	tag.addEventListener('click', () => {
+		tag.select();
+	});
+
+	function update(panels) {
+		if (Array.isArray(panels)) {
+			for (let i = 0 ; i < 30 ; ++i) {
+				buttons[i].dataset.color = panels[i] || '';
+			}
+		}
+		const type = 'square';
+		const p = buttons.map((b) => {
+			return b.dataset.color || 'e';
+		}).join('').replace(/e+$/, '');
+		const url = `${ type }.svg?p=${p}${ light.checked ? '&m=l' : ''}`;
+		sample.data = url;
+		tag.value = `<object data="https://azulamb.github.io/wordle-icon/${ url }"></object>`;
+	}
+	update(['u', 'u', 'w', 'u', 'u', 'u', 'w', 'u', 'w', 'u', 'u', 'u', 'c', 'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u', 'c', 'c', 'c', 'c', 'c']);
+});
+</script>
+</head>
+<body>
+	<h1>WORDLE ICON</h1>
+	<div id="main">
+		<div id="wordle"></div>
+		<div id="input">
+			<textarea id="result" placeholder="Paste WORDLE result."></textarea>
+			<div>
+				<label><input type="checkbox" id="square" checked>Square</label>
+				<label><input type="checkbox" id="light">Light mode</label>
+			</div>
+		</div>
+		<object id="sample" data="./square.svg?p=uuwuuuwuwuuucuuuuuuuuuuuuccccc" style="width:100%"></object>
+	</div>
+	<input id="tag">
+</body>
+</html>
+
