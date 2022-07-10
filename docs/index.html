@@ -30,6 +30,11 @@ window.addEventListener('DOMContentLoaded', () => {
 	};
 	const next = [ '', 'u', 'w', 'c' ];
 
+	const status = {
+		no: 0,
+		result: 0,
+	};
+
 	const sample = document.getElementById('sample');
 
 	const result = document.getElementById('result');
@@ -41,12 +46,9 @@ window.addEventListener('DOMContentLoaded', () => {
 			return data[panel];
 		});
 
-		const status = {
-			no: 0,
-			result: 0,
-		};
-
 		// Parse status.
+		status.no = 0;
+		status.result = 0;
 		value.split(/\s+/g).forEach((data) => {
 			if (data.match(/^[0-9]+$/)) {
 				// Number.
@@ -78,6 +80,8 @@ window.addEventListener('DOMContentLoaded', () => {
 			const button = document.createElement('button');
 			buttons.push(button);
 			button.addEventListener('click',()=> {
+				status.no = 0;
+				status.result = 0;
 				const now = button.dataset.color || '';
 				button.dataset.color = next[ (next.indexOf(now) + 1) % 4 ];
 				update();
@@ -103,7 +107,9 @@ window.addEventListener('DOMContentLoaded', () => {
 		}).join('').replace(/e+$/, '');
 		const url = `${ type }.svg?p=${p}${ light.checked ? '&m=l' : ''}`;
 		sample.data = url;
-		tag.value = `<object data="https://azulamb.github.io/wordle-icon/${ url }"></object>`;
+		const no = status.no ? ` data-no="${ status.no }"` : '';
+		const result = status.result || 'X';
+		tag.value = `<object data="https://azulamb.github.io/wordle-icon/${ url }"${ no } data-result="${ result }"></object>`;
 	}
 	update(['u', 'u', 'w', 'u', 'u', 'u', 'w', 'u', 'w', 'u', 'u', 'u', 'c', 'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u', 'c', 'c', 'c', 'c', 'c']);
 });
