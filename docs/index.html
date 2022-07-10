@@ -97,7 +97,7 @@ window.addEventListener('DOMContentLoaded', () => {
 				buttons[i].dataset.color = panels[i] || '';
 			}
 		}
-		const type = 'square';
+		const type = square.checked ? 'square' : 'icon';
 		const p = buttons.map((b) => {
 			return b.dataset.color || 'e';
 		}).join('').replace(/e+$/, '');
@@ -120,7 +120,7 @@ window.addEventListener('DOMContentLoaded', () => {
 				<label><input type="checkbox" id="light">Light mode</label>
 			</div>
 		</div>
-		<object id="sample" data="./square.svg?p=uuwuuuwuwuuucuuuuuuuuuuuuccccc" style="width:100%"></object>
+		<object id="sample" data="./square.svg?p=uuwuuuwuwuuucuuuuuuuuuuuuccccc" style="height:100%"></object>
 	</div>
 	<input id="tag">
 </body>
